@@ -2,14 +2,15 @@ import './style.css'
 const canvas = document.querySelector("canvas");
 const ctx = canvas?.getContext('2d');
 
-const width = 850;
-const height = 600;
+let width: number;
+let height: number;
+
 const epsilon = 0.4;
 const radius = 35;
 
 let players: Array<string> = [];
 let balls: Array<Ball> = [];
-let stars: Array<{x: number, y: number, r: number, alpha: number}> = [];
+let stars: Array<{ x: number, y: number, r: number, alpha: number }> = [];
 
 const randColor = () => '#' + Math.floor((Math.random() * 0.9 + 0.1) * 16777215).toString(16);
 
@@ -22,33 +23,33 @@ class Vec {
         this.y = y;
     }
 
-    mag() : number {
+    mag(): number {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
-    sub(other: Vec) : Vec {
+    sub(other: Vec): Vec {
         return new Vec(this.x - other.x, this.y - other.y);
     }
 
-    add(other: Vec) : Vec {
+    add(other: Vec): Vec {
         return new Vec(this.x + other.x, this.y + other.y);
     }
 
-    mul(s: number) : Vec {
+    mul(s: number): Vec {
         return new Vec(s * this.x, s * this.y);
     }
 
-    normalize() : Vec {
+    normalize(): Vec {
         let m = this.mag();
         return new Vec(this.x / m, this.y / m);
     }
 
-    withMag(mag: number) : Vec {
+    withMag(mag: number): Vec {
         const v = this.normalize();
         return new Vec(v.x * mag, v.y * mag);
     }
 
-    dot(other: Vec) : number {
+    dot(other: Vec): number {
         return this.x * other.x + this.y * other.y;
     }
 }
@@ -112,7 +113,7 @@ class Ball {
         }
     }
 
-    gone() : boolean {
+    gone(): boolean {
         let center = new Vec(width / 2, height / 2);
         let relative = center.sub(this.pos);
         let dist = relative.mag() - this.radius * 2 - 5;
@@ -164,7 +165,7 @@ playButton?.addEventListener('click', function handleClick(_event) {
     setup();
 });
 
-function randomVelocity(mag: number) : Vec {
+function randomVelocity(mag: number): Vec {
     let x = 0;
     let y = 0;
     while (Math.abs(x) <= 0.1) { x = Math.random() - 0.5 };
@@ -172,7 +173,7 @@ function randomVelocity(mag: number) : Vec {
     return new Vec(x, y).withMag(mag);
 }
 
-function randomPosition(width: number, height: number) : Vec {
+function randomPosition(width: number, height: number): Vec {
     let pos = new Vec(width / 2, height / 2);
     const center = new Vec(width / 2, height / 2);
     while (pos.sub(center).mag() < 2 * radius) {
@@ -205,7 +206,7 @@ function setStars(n: number) {
         const y = Math.random() * height;
         const r = Math.random() * 3;
         const alpha = Math.random();
-        stars.push({x, y, r, alpha});
+        stars.push({ x, y, r, alpha });
     }
 }
 
@@ -226,9 +227,9 @@ function nightstars() {
 }
 
 function setup() {
-    if (!ctx || !canvas) {return};
-    canvas.width = width;
-    canvas.height = height;
+    if (!ctx || !canvas) { return };
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
     balls = [];
     const n = players.length;
     for (let i = 0; i < n; i++) {
@@ -299,3 +300,19 @@ function draw() {
         id = window.requestAnimationFrame(draw)
     };
 };
+
+function resizeCanvas() {
+    if (!canvas || !ctx) { return };
+    const windowWidth = 0.75 * window.innerWidth;
+    const windowHeight = 0.75 * window.innerHeight;
+
+    canvas.width = Math.floor(windowWidth * window.devicePixelRatio);
+    canvas.height = Math.floor(windowHeight * window.devicePixelRatio);
+
+    canvas.style.width = windowWidth + "px";
+    canvas.style.height = windowHeight + "px";
+
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    width = windowWidth;
+    height = windowHeight;
+}
