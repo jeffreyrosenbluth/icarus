@@ -243,6 +243,7 @@ function draw() {
     let diameter = radius;
 
     strokeStar(width / 2, height / 2, 1.4 * radius, 16, 0.65);
+
     for (let i = 0; i < 5; i++) {
         ctx.fillStyle = 'rgba(255, 65, 0, 0.31)';
         ctx.beginPath();
