@@ -2,12 +2,14 @@ import './style.css'
 const canvas = document.querySelector("canvas");
 const ctx = canvas?.getContext('2d');
 
-const width = 900;
-const height = 650;
-const epsilon = 0.43;
+const width = 850;
+const height = 600;
+const epsilon = 0.4;
 const radius = 35;
 
 let players: Array<string> = [];
+let balls: Array<Ball> = [];
+let stars: Array<{x: number, y: number, r: number, alpha: number}> = [];
 
 const randColor = () => '#' + Math.floor((Math.random() * 0.9 + 0.1) * 16777215).toString(16);
 
@@ -20,33 +22,33 @@ class Vec {
         this.y = y;
     }
 
-    mag() {
+    mag() : number {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
-    sub(other: Vec) {
+    sub(other: Vec) : Vec {
         return new Vec(this.x - other.x, this.y - other.y);
     }
 
-    add(other: Vec) {
+    add(other: Vec) : Vec {
         return new Vec(this.x + other.x, this.y + other.y);
     }
 
-    mul(s: number) {
+    mul(s: number) : Vec {
         return new Vec(s * this.x, s * this.y);
     }
 
-    normalize() {
+    normalize() : Vec {
         let m = this.mag();
         return new Vec(this.x / m, this.y / m);
     }
 
-    withMag(mag: number) {
+    withMag(mag: number) : Vec {
         const v = this.normalize();
         return new Vec(v.x * mag, v.y * mag);
     }
 
-    dot(other: Vec) {
+    dot(other: Vec) : number {
         return this.x * other.x + this.y * other.y;
     }
 }
@@ -79,19 +81,6 @@ class Ball {
         let relative = other.pos.sub(this.pos);
         let dist = relative.mag() - (this.radius + other.radius);
         if (dist < 0) {
-            // let movement = relative.withMag(Math.abs(dist / 2));
-            // this.pos = this.pos.sub(movement);
-            // other.pos = other.pos.add(movement);
-
-            // let thisToOtherNormal = relative.normalize();
-            // let approachSpeed = Math.max(
-            //     Math.min(this.vel.dot(thisToOtherNormal) + -other.vel.dot(thisToOtherNormal), 5),
-            //     1
-            // );
-            // let approachVector = thisToOtherNormal.withMag(approachSpeed);
-            // this.vel = this.vel.sub(approachVector).tweak();
-            // other.vel = other.vel.add(approachVector).tweak();
-
             const velDiff = this.vel.sub(other.vel);
             const posDiff = this.pos.sub(other.pos);
             const distSq = posDiff.dot(posDiff);
@@ -123,19 +112,18 @@ class Ball {
         }
     }
 
-    gone() {
+    gone() : boolean {
         let center = new Vec(width / 2, height / 2);
         let relative = center.sub(this.pos);
         let dist = relative.mag() - this.radius * 2 - 5;
         return dist < 0;
     }
 
-
     render(size: number) {
         if (!ctx) return;
         if (!canvas) return;
         ctx.strokeStyle = this.color;
-        ctx.lineWidth = 3 * size;
+        ctx.lineWidth = 5 * size;
         ctx.beginPath();
         ctx.arc(
             this.pos.x,
@@ -163,7 +151,6 @@ class Ball {
     }
 }
 
-let balls: Array<Ball> = [];
 
 const playerTextarea = document.getElementById('players') as HTMLInputElement | null;
 playerTextarea?.addEventListener('input', function (event) {
@@ -177,7 +164,7 @@ playButton?.addEventListener('click', function handleClick(_event) {
     setup();
 });
 
-function randomVelocity(mag: number) {
+function randomVelocity(mag: number) : Vec {
     let x = 0;
     let y = 0;
     while (Math.abs(x) <= 0.1) { x = Math.random() - 0.5 };
@@ -185,7 +172,7 @@ function randomVelocity(mag: number) {
     return new Vec(x, y).withMag(mag);
 }
 
-function randomPosition(width: number, height: number) {
+function randomPosition(width: number, height: number) : Vec {
     let pos = new Vec(width / 2, height / 2);
     const center = new Vec(width / 2, height / 2);
     while (pos.sub(center).mag() < 2 * radius) {
@@ -194,14 +181,13 @@ function randomPosition(width: number, height: number) {
     return pos;
 }
 
-function strokeStar(x: number, y: number, r: number, n: number, inset: number) {
+function sun(x: number, y: number, r: number, n: number, inset: number) {
     if (!ctx) return;
-    if (!canvas) return;
     ctx.save();
     ctx.beginPath();
     ctx.translate(x, y);
     ctx.moveTo(0, 0 - r);
-    for (var i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
         ctx.rotate(Math.PI / n);
         ctx.lineTo(0, 0 - (r * inset));
         ctx.rotate(Math.PI / n);
@@ -213,7 +199,36 @@ function strokeStar(x: number, y: number, r: number, n: number, inset: number) {
     ctx.restore();
 }
 
+function setStars(n: number) {
+    for (let i = 0; i < n; i++) {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        const r = Math.random() * 3;
+        const alpha = Math.random();
+        stars.push({x, y, r, alpha});
+    }
+}
+
+function nightstars() {
+    if (!ctx) { return };
+    for (const star of stars) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${0.5 * star.alpha})`;
+        ctx.beginPath();
+        ctx.arc(
+            star.x,
+            star.y,
+            star.r,
+            0,
+            2 * Math.PI
+        );
+        ctx.fill();
+    }
+}
+
 function setup() {
+    if (!ctx || !canvas) {return};
+    canvas.width = width;
+    canvas.height = height;
     balls = [];
     const n = players.length;
     for (let i = 0; i < n; i++) {
@@ -227,22 +242,24 @@ function setup() {
             )
         );
     }
+    stars = [];
+    setStars(70);
     window.requestAnimationFrame(draw);
 };
 
 function draw() {
     if (!ctx) return;
-    if (!canvas) return;
     let id = 0;
     ctx.fillStyle = 'black';
     ctx.strokeStyle = 'black'
     ctx.fillRect(0, 0, width, height);
     ctx.strokeRect(0, 0, width, height);
+    nightstars();
     const x = width / 2;
     const y = height / 2;
     let diameter = radius;
 
-    strokeStar(width / 2, height / 2, 1.4 * radius, 16, 0.65);
+    sun(width / 2, height / 2, 1.4 * radius, 16, 0.65);
 
     for (let i = 0; i < 5; i++) {
         ctx.fillStyle = 'rgba(255, 65, 0, 0.31)';
@@ -273,9 +290,10 @@ function draw() {
         ctx.strokeStyle = 'black'
         ctx.fillRect(0, 0, width, height);
         ctx.strokeRect(0, 0, width, height);
+        nightstars();
         let ball = balls[0];
         ball.pos = new Vec(width / 2, height / 2);
-        ball.render(2);
+        ball.render(3);
         ball.move();
     } else {
         id = window.requestAnimationFrame(draw)
