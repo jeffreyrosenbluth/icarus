@@ -6,6 +6,7 @@ let width: number;
 let height: number;
 let scale: number;
 let playing = false;
+let gameOver = false
 
 const epsilon = 0.4;
 const radius = 35;
@@ -120,7 +121,7 @@ class Ball {
         let center = new Vec(width / 2, height / 2);
         let relative = center.sub(this.pos);
         let dist = relative.mag() - this.radius * 2 - 5;
-        return dist < 0;
+        return (dist < 0 && !gameOver);
     }
 
     render(size: number) {
@@ -249,6 +250,7 @@ function setup() {
     }
     stars = [];
     setStars(70);
+    gameOver = false;
     window.requestAnimationFrame(draw);
 };
 
@@ -292,6 +294,7 @@ function draw() {
         balls[i].render(1);
     }
 
+    if (balls.length === 1) { gameOver = true };
 
     if (balls.length < 2 && deadBalls.length === 0) {
         window.cancelAnimationFrame(id)
