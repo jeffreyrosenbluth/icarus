@@ -4,6 +4,7 @@ const ctx = canvas?.getContext('2d');
 
 let width: number;
 let height: number;
+let scale: number;
 
 const epsilon = 0.4;
 const radius = 35;
@@ -124,12 +125,12 @@ class Ball {
         if (!ctx) return;
         if (!canvas) return;
         ctx.strokeStyle = this.color;
-        ctx.lineWidth = 5 * size;
+        ctx.lineWidth = 5 * size * scale;
         ctx.beginPath();
         ctx.arc(
             this.pos.x,
             this.pos.y,
-            this.radius * size,
+            this.radius * size * scale,
             epsilon,
             Math.PI - epsilon
         );
@@ -139,12 +140,12 @@ class Ball {
 
             this.pos.x,
             this.pos.y,
-            this.radius * size,
+            this.radius * size * scale,
             Math.PI + epsilon,
             -epsilon
         );
         ctx.stroke();
-        ctx.font = `bold ${20 * size}px sans-serif`;
+        ctx.font = `bold ${20 * size * scale}px sans-serif`;
         ctx.textAlign = "center";
         ctx.fillStyle = this.color;
         ctx.textBaseline = "middle";
@@ -187,12 +188,12 @@ function sun(x: number, y: number, r: number, n: number, inset: number) {
     ctx.save();
     ctx.beginPath();
     ctx.translate(x, y);
-    ctx.moveTo(0, 0 - r);
+    ctx.moveTo(0, 0 - r * scale);
     for (let i = 0; i < n; i++) {
         ctx.rotate(Math.PI / n);
-        ctx.lineTo(0, 0 - (r * inset));
+        ctx.lineTo(0, 0 - (r * scale * inset));
         ctx.rotate(Math.PI / n);
-        ctx.lineTo(0, 0 - r);
+        ctx.lineTo(0, 0 - r * scale);
     }
     ctx.closePath();
     ctx.fillStyle = 'rgba(255, 215, 0, 0.7)';
@@ -218,7 +219,7 @@ function nightstars() {
         ctx.arc(
             star.x,
             star.y,
-            star.r,
+            star.r * scale,
             0,
             2 * Math.PI
         );
@@ -265,7 +266,7 @@ function draw() {
     for (let i = 0; i < 5; i++) {
         ctx.fillStyle = 'rgba(255, 65, 0, 0.31)';
         ctx.beginPath();
-        ctx.arc(x, y, diameter, 0, 2 * Math.PI);
+        ctx.arc(x, y, diameter * scale, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.fill();
         diameter /= 1.8;
@@ -313,6 +314,8 @@ function resizeCanvas() {
     canvas.style.height = windowHeight + "px";
 
     ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
     width = windowWidth;
     height = windowHeight;
+    scale = Math.max(width, height) / 1000;
 }
