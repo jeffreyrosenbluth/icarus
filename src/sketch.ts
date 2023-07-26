@@ -188,12 +188,12 @@ function sun(x: number, y: number, r: number, n: number, inset: number) {
     ctx.save();
     ctx.beginPath();
     ctx.translate(x, y);
-    ctx.moveTo(0, 0 - r * scale);
+    ctx.moveTo(0, 0 - r);
     for (let i = 0; i < n; i++) {
         ctx.rotate(Math.PI / n);
-        ctx.lineTo(0, 0 - (r * scale * inset));
+        ctx.lineTo(0, 0 - (r * inset));
         ctx.rotate(Math.PI / n);
-        ctx.lineTo(0, 0 - r * scale);
+        ctx.lineTo(0, 0 - r);
     }
     ctx.closePath();
     ctx.fillStyle = 'rgba(255, 215, 0, 0.7)';
@@ -261,7 +261,7 @@ function draw() {
     const y = height / 2;
     let diameter = radius;
 
-    sun(width / 2, height / 2, 1.4 * radius, 16, 0.65);
+    sun(width / 2, height / 2, 1.4 * radius * scale, 16, 0.65);
 
     for (let i = 0; i < 5; i++) {
         ctx.fillStyle = 'rgba(255, 65, 0, 0.31)';
