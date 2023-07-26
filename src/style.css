@@ -4,7 +4,7 @@
   font-weight: 400;
 
   color-scheme: light dark;
-	background: linear-gradient(90deg, rgb(10, 5, 40) 0%, rgb(25, 50, 95) 50%, rgb(10, 5, 40) 100%);
+  background: linear-gradient(90deg, rgb(10, 5, 40) 0%, rgb(25, 50, 95) 50%, rgb(10, 5, 40) 100%);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -22,21 +22,22 @@ body {
 }
 
 h1 {
-  font-size: 3.0em;
+  font-size: 3.5vh;
   line-height: 1.0;
   margin-bottom: 0px;
   margin-top: 20px;
-} 
+}
 
 h4 {
   font-style: italic;
+  font-size: 1.4vh;
 }
 
 button {
   padding: 8px;
   background-color: slategray;
   color: white;
-  font-size: 1rem;
+  font-size: 1.5vh;
   border: 2.5px solid slategray;
   width: 10rem;
   margin-bottom: 15px;
