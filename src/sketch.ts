@@ -5,6 +5,7 @@ const ctx = canvas?.getContext('2d');
 let width: number;
 let height: number;
 let scale: number;
+let playing = false;
 
 const epsilon = 0.4;
 const radius = 35;
@@ -163,7 +164,8 @@ playerTextarea?.addEventListener('input', function (event) {
 
 const playButton = document.getElementById('playButton');
 playButton?.addEventListener('click', function handleClick(_event) {
-    setup();
+    playing = true;
+    requestAnimationFrame(setup);
 });
 
 function randomVelocity(mag: number): Vec {
@@ -272,6 +274,8 @@ function draw() {
         diameter /= 1.8;
     }
 
+    if (!playing) {return};
+
     let bs = balls.filter((e) => !e.gone());
     balls = balls.length === 1 ? balls : bs;
 
@@ -318,4 +322,7 @@ function resizeCanvas() {
     width = windowWidth;
     height = windowHeight;
     scale = Math.max(width, height) / 1000;
+    
+    requestAnimationFrame(draw);
 }
+setup();
