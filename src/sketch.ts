@@ -12,6 +12,7 @@ const radius = 35;
 
 let players: Array<string> = [];
 let balls: Array<Ball> = [];
+let deadBalls: Array<Ball> = [];
 let stars: Array<{ x: number, y: number, r: number, alpha: number }> = [];
 
 const randColor = () => '#' + Math.floor((Math.random() * 0.9 + 0.1) * 16777215).toString(16);
@@ -274,9 +275,10 @@ function draw() {
         diameter /= 1.8;
     }
 
-    if (!playing) {return};
+    if (!playing) { return };
 
     let bs = balls.filter((e) => !e.gone());
+    deadBalls = deadBalls.concat(balls.filter((e) => e.gone()));
     balls = balls.length === 1 ? balls : bs;
 
     for (let i = 0; i < balls.length; i++) {
@@ -290,7 +292,8 @@ function draw() {
         balls[i].render(1);
     }
 
-    if (balls.length < 2) {
+
+    if (balls.length < 2 && deadBalls.length === 0) {
         window.cancelAnimationFrame(id)
         ctx.fillStyle = 'black';
         ctx.strokeStyle = 'black'
@@ -298,10 +301,18 @@ function draw() {
         ctx.strokeRect(0, 0, width, height);
         nightstars();
         let ball = balls[0];
-        ball.pos = new Vec(width / 2, height / 2);
+        ball.pos = new Vec(width / 2, height / 4);
         ball.render(3);
         ball.move();
     } else {
+        deadBalls.forEach((dead) => {
+            dead.radius /= 1.05;
+            dead.vel = dead.vel.mul(0.95);
+            dead.move();
+            dead.render(1);
+            dead.name = '';
+        });
+        deadBalls = deadBalls.filter((e) => e.radius > 5);
         id = window.requestAnimationFrame(draw)
     };
 };
@@ -322,7 +333,7 @@ function resizeCanvas() {
     width = windowWidth;
     height = windowHeight;
     scale = Math.max(width, height) / 1000;
-    
+
     requestAnimationFrame(draw);
 }
 setup();
