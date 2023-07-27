@@ -310,10 +310,10 @@ function draw() {
     } else {
         deadBalls.forEach((dead) => {
             dead.radius /= 1.05;
-            dead.vel = dead.vel.mul(0.95);
+            dead.vel = dead.vel.mul(-0.95);
             dead.move();
-            dead.render(1);
-            dead.name = '';
+            dead.render(dead.radius / radius);
+            // dead.name = '';
         });
         deadBalls = deadBalls.filter((e) => e.radius > 5);
         id = window.requestAnimationFrame(draw)
