@@ -1,6 +1,6 @@
 import './style.css'
 import { Ball } from './balls';
-import { canvas, ctx, gameState, Status, RADIUS } from './core';
+import { canvas, ctx, gameState, Status, RADIUS, BallState } from './core';
 
 
 const playerTextarea = document.getElementById('players') as HTMLInputElement | null;
@@ -126,9 +126,9 @@ function animateWinner() {
 
     const x = gameState.width / 2;
     const y = gameState.height / 2;
-    const ball = gameState.balls[0];
+    const ball = gameState.balls.filter(ball => ball.state === BallState.ALIVE)[0];
     const fontSize = 20 / RADIUS * ball.radius * gameState.scale;
-    const text = `${ball.name} wins!`;
+    const text = `${ball.name}`;
 
     ctx.font = `bold ${fontSize}px sans-serif`;
     ball.color.setAlpha(1);
@@ -139,7 +139,6 @@ function animateWinner() {
 
     ball.radius += 0.5;
     if (ball.radius > 100) {
-        ball.radius = 0;
         ball.reset(gameState);
         window.cancelAnimationFrame(gameState.frame);
         return;
