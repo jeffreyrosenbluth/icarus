@@ -1,8 +1,8 @@
 import { Vec } from './vec';
 import { RADIUS, BallState, GameState, gameState, canvas, ctx } from './core';
 
-
-const randColor = () => '#' + Math.floor((Math.random() * 0.9 + 0.1) * 16777215).toString(16);
+const EPSILON = 0.4;
+const FADE = 0.95;
 
 function randomVelocity(mag: number): Vec {
     let x = 0;
@@ -21,31 +21,62 @@ function randomPosition(width: number, height: number, radius: number): Vec {
     return pos;
 }
 
+export class Rgba {
+    constructor(
+        public r: number = 0,
+        public g: number = 0,
+        public b: number = 0,
+        public a: number = 1) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+    }
+
+    color() {
+        return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`;
+    }
+
+    setAlpha(a: number) {
+        this.a = a;
+    }
+
+    random() {
+        this.r = Math.floor(Math.random() * 200 + 55);
+        this.g = Math.floor(Math.random() * 200 + 55);
+        this.b = Math.floor(Math.random() * 200 + 55);
+    }
+}
+
 export class Ball {
     constructor(
+        public id: number = 0,
         public pos: Vec = new Vec(0, 0),
         public vel: Vec = new Vec(0, 0),
         public radius: number = RADIUS,
-        public color: string = randColor(),
+        public color: Rgba = new Rgba(),
         public name: string = '',
-        public state: BallState = BallState.ACTIVE) {
+        public state: BallState = BallState.ALIVE) {
+        this.id = id;
         this.pos = pos;
         this.vel = vel;
         this.radius = radius;
+        color.random();
         this.color = color;
         this.name = name;
         this.state = state;
     };
 
     reset(gameState: GameState) {
-        this.state = BallState.ACTIVE;
+        this.state = BallState.ALIVE;
         this.pos = randomPosition(gameState.width, gameState.height, RADIUS);
         this.vel = randomVelocity(7 * gameState.scale);
         this.radius = RADIUS;
+        this.color.setAlpha(1);
     }
 
     collide(other: Ball) {
-        if (other == this || this.state !== BallState.ACTIVE || other.state !== BallState.ACTIVE) {
+        if (other == this || this.state !== BallState.ALIVE || other.state !== BallState.ALIVE) {
             return;
         }
         let relative = other.pos.sub(this.pos);
@@ -63,10 +94,6 @@ export class Ball {
     }
 
     move() {
-        if (this.state === BallState.WINNER) {
-            this.vel = this.pos.sub(new Vec(gameState.width / 2, gameState.height / 2)).withMag(2);
-            return;
-        }
         if (this.state === BallState.DEAD) {
             this.vel = this.vel.mul(-0.95);
         }
@@ -93,30 +120,34 @@ export class Ball {
         let center = new Vec(gameState.width / 2, gameState.height / 2);
         let relative = center.sub(this.pos);
         let dist = relative.mag() - this.radius * 2 - 5;
-        this.state = dist < 0 ? BallState.DEAD : this.state;
+        if (dist < 0) {
+            this.state = BallState.DEAD;
+            gameState.runnerUp = this.id;
+        }
     }
 
     render(size: number) {
-        const epsilon = 0.4;
         if (!ctx) return;
         if (!canvas) return;
         let fontSize = 20 / RADIUS * this.radius * size * gameState.scale;
-        ctx.strokeStyle = this.color;
+        ctx.strokeStyle = this.color.color();
         ctx.lineWidth = 5 * size * gameState.scale;
         if (this.state === BallState.DEAD) {
-            this.radius = this.radius < 3 ? 0 : this.radius * 0.975;
+            this.radius = this.radius < 3 ? 0 : this.radius * FADE;
             if (this.radius < 3) {
                 fontSize = 0;
-            } else
-                fontSize *= 0.975;
+            } else {
+                fontSize *= FADE;
+            }
+            this.color.setAlpha(FADE * this.radius / RADIUS);
         }
         ctx.beginPath();
         ctx.arc(
             this.pos.x,
             this.pos.y,
             this.radius * size * gameState.scale,
-            epsilon,
-            Math.PI - epsilon
+            EPSILON,
+            Math.PI - EPSILON
         );
         ctx.stroke();
         ctx.beginPath();
@@ -125,13 +156,13 @@ export class Ball {
             this.pos.x,
             this.pos.y,
             this.radius * size * gameState.scale,
-            Math.PI + epsilon,
-            -epsilon
+            Math.PI + EPSILON,
+            -EPSILON
         );
         ctx.stroke();
         ctx.font = `bold ${fontSize}px sans-serif`;
         ctx.textAlign = "center";
-        ctx.fillStyle = this.color;
+        ctx.fillStyle = this.color.color();
         ctx.textBaseline = "middle";
         ctx.fillText(this.name, this.pos.x, this.pos.y);
     }

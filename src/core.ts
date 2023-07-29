@@ -6,9 +6,8 @@ export const ctx = canvas?.getContext('2d');
 export const RADIUS = 35;
 
 export enum BallState {
-    ACTIVE,
+    ALIVE,
     DEAD,
-    WINNER,
 }
 
 export enum Status {
@@ -26,7 +25,8 @@ export class GameState {
         public players: Array<string> = [],
         public balls: Array<Ball> = [],
         public stars: Array<{ x: number, y: number, r: number, alpha: number }> = [],
-        public frame: number = 0,) {
+        public frame: number = 0,
+        public runnerUp: number = 0) {
         this.width = width;
         this.height = height;
         this.status = status;
@@ -70,9 +70,11 @@ export class GameState {
 
     gameOver() {
         let count = this.balls.reduce((acc, ball) => {
-            return ball.state === BallState.ACTIVE ? acc + 1 : acc;
+            return ball.state === BallState.ALIVE ? acc + 1 : acc;
         }, 0);
-        if (count === 1) { this.status = Status.OVER };
+        if (count === 1) {
+            this.status = Status.OVER;
+        }
     }
 }
 

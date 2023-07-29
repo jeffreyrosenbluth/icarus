@@ -9,9 +9,10 @@ playerTextarea?.addEventListener('input', function (event) {
     const players = target.value.split(',');
     gameState.players = players.map(v => v.trim());
     gameState.balls = [];
-    gameState.players.forEach((name) => {
+    gameState.players.forEach((name, i) => {
         let ball = new Ball();
         ball.name = name;
+        ball.id = i;
         gameState.balls.push(ball);
     });
     gameState.reset();
@@ -90,7 +91,7 @@ function draw() {
         radius /= 1.8;
     }
 
-    if (gameState.status != Status.STARTED) { return };
+    if (gameState.status === Status.PAUSED) { return };
 
     for (let i = 0; i < gameState.balls.length; i++) {
         gameState.balls[i].gone();
@@ -106,10 +107,12 @@ function draw() {
 
     gameState.gameOver();
     if (gameState.status as Status === Status.OVER) {
-        window.cancelAnimationFrame(gameState.frame);
-        animateWinner();
-        return;
-    };
+        if (gameState.balls[gameState.runnerUp].radius < 3) {
+            window.cancelAnimationFrame(gameState.frame);
+            animateWinner();
+            return;
+        }
+    }
     gameState.frame = window.requestAnimationFrame(draw)
 };
 
@@ -128,7 +131,8 @@ function animateWinner() {
     const text = `${ball.name} wins!`;
 
     ctx.font = `bold ${fontSize}px sans-serif`;
-    ctx.fillStyle = ball.color;
+    ball.color.setAlpha(1);
+    ctx.fillStyle = ball.color.color();
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(text, x, y);
