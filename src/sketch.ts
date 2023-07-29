@@ -1,6 +1,7 @@
 import './style.css'
 import { Ball } from './balls';
-import { canvas, ctx, gameState, Status, RADIUS, BallState } from './core';
+import { canvas, ctx, gameState, Status, RADIUS } from './core';
+import { Vec } from './vec';
 
 
 const playerTextarea = document.getElementById('players') as HTMLInputElement | null;
@@ -107,6 +108,9 @@ function draw() {
 
     gameState.gameOver();
     if (gameState.status as Status === Status.OVER) {
+        let ball = gameState.winners()[0];
+        ball.vel = (new Vec(gameState.width / 2, gameState.height / 2)).sub(ball.pos);
+        ball.vel = ball.vel.withMag(3);
         if (gameState.balls[gameState.runnerUp].radius < 3) {
             window.cancelAnimationFrame(gameState.frame);
             animateWinner();
@@ -126,7 +130,7 @@ function animateWinner() {
 
     const x = gameState.width / 2;
     const y = gameState.height / 2;
-    const ball = gameState.balls.filter(ball => ball.state === BallState.ALIVE)[0];
+    const ball = gameState.winners()[0];
     const fontSize = 20 / RADIUS * ball.radius * gameState.scale;
     const text = `${ball.name}`;
 

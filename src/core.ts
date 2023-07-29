@@ -76,6 +76,10 @@ export class GameState {
             this.status = Status.OVER;
         }
     }
+
+    winners() {
+        return this.balls.filter(ball => ball.state === BallState.ALIVE);
+    }
 }
 
 export let gameState = new GameState(0.75 * window.innerWidth, 0.60 * window.innerHeight);

@@ -36,4 +36,16 @@ export class Vec {
     dot(other: Vec): number {
         return this.x * other.x + this.y * other.y;
     }
+
+    unzero() {
+        const m = this.mag();
+        if (Math.abs(this.x) < 0.01) {
+            this.x = 0.1 * m * Math.sign(this.x);
+            this.y = 0.9 * m * Math.sign(this.y);
+        }
+        if (Math.abs(this.y) < 0.01) {
+            this.x = 0.9 * m * Math.sign(this.x);
+            this.y = 0.1 * m * Math.sign(this.y);
+        }
+    }
 }

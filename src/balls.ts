@@ -1,5 +1,5 @@
 import { Vec } from './vec';
-import { RADIUS, BallState, GameState, gameState, canvas, ctx } from './core';
+import { RADIUS, BallState, GameState, gameState, canvas, ctx, Status } from './core';
 
 const EPSILON = 0.4;
 const FADE = 0.95;
@@ -9,7 +9,9 @@ function randomVelocity(mag: number): Vec {
     let y = 0;
     while (Math.abs(x) <= 0.1) { x = Math.random() - 0.5 };
     while (Math.abs(y) <= 0.1) { y = Math.random() - 0.5 };
-    return new Vec(x, y).withMag(mag);
+    let vel = new Vec(x, y).withMag(mag);
+    vel.unzero();
+    return vel;
 }
 
 function randomPosition(width: number, height: number, radius: number): Vec {
@@ -53,7 +55,7 @@ export class Ball {
         public id: number = 0,
         public pos: Vec = new Vec(0, 0),
         public vel: Vec = new Vec(0, 0),
-        public radius: number = RADIUS,
+        public radius: number = RADIUS * gameState.scale,
         public color: Rgba = new Rgba(),
         public name: string = '',
         public state: BallState = BallState.ALIVE) {
@@ -69,9 +71,9 @@ export class Ball {
 
     reset(gameState: GameState) {
         this.state = BallState.ALIVE;
-        this.pos = randomPosition(gameState.width, gameState.height, RADIUS);
+        this.pos = randomPosition(gameState.width, gameState.height, RADIUS * gameState.scale);
         this.vel = randomVelocity(7 * gameState.scale);
-        this.radius = RADIUS;
+        this.radius = RADIUS * gameState.scale;
         this.color.setAlpha(1);
     }
 
@@ -114,13 +116,14 @@ export class Ball {
             this.pos.y = gameState.height - this.radius;
             this.vel.y = -this.vel.y;
         }
+        this.vel.unzero();
     }
 
     gone() {
         let center = new Vec(gameState.width / 2, gameState.height / 2);
         let relative = center.sub(this.pos);
         let dist = relative.mag() - this.radius * 2 - 5;
-        if (dist < 0) {
+        if (dist < 0 && gameState.status as Status !== Status.OVER) {
             this.state = BallState.DEAD;
             gameState.runnerUp = this.id;
         }
@@ -145,17 +148,16 @@ export class Ball {
         ctx.arc(
             this.pos.x,
             this.pos.y,
-            this.radius * size * gameState.scale,
+            this.radius * size,
             EPSILON,
             Math.PI - EPSILON
         );
         ctx.stroke();
         ctx.beginPath();
         ctx.arc(
-
             this.pos.x,
             this.pos.y,
-            this.radius * size * gameState.scale,
+            this.radius * size,
             Math.PI + EPSILON,
             -EPSILON
         );
