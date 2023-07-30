@@ -1,7 +1,6 @@
 import './style.css'
 import { Ball } from './balls';
 import { canvas, ctx, gameState, Status, RADIUS } from './core';
-import { Vec } from './vec';
 
 // Update the players / balls when the user types in the textarea.
 // Store the players in localStorage.
