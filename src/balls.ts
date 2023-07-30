@@ -80,8 +80,10 @@ export class Ball {
             const cosAngle = velDiff.dot(posDiff);
             this.vel = this.vel.sub(posDiff.mul(cosAngle / distSq));
             if (this.vel.mag() < 3) { this.vel = this.vel.withMag(3) };
+            this.vel.unzero();
             other.vel = other.vel.add(posDiff.mul(cosAngle / distSq));
             if (other.vel.mag() < 3) { other.vel = other.vel.withMag(3) };
+            other.vel.unzero();
         }
     }
 
@@ -106,7 +108,6 @@ export class Ball {
             this.pos.y = gameState.height - this.radius;
             this.vel.y = -this.vel.y;
         }
-        this.vel.unzero();
     }
 
     gone() {
