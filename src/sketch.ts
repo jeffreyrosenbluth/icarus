@@ -3,7 +3,8 @@ import { Ball } from './balls';
 import { canvas, ctx, gameState, Status, RADIUS } from './core';
 import { Vec } from './vec';
 
-
+// Update the players / balls when the user types in the textarea.
+// Store the players in localStorage.
 const playerTextarea = document.getElementById('players') as HTMLInputElement | null;
 playerTextarea?.addEventListener('input', function (event) {
     const target = event.target as HTMLInputElement;
@@ -22,15 +23,17 @@ playerTextarea?.addEventListener('input', function (event) {
     }
 });
 
+// The play button starts the game.
 const playButton = document.getElementById('playButton');
 playButton?.addEventListener('click', function handleClick(_event) {
+    // If the game is already going, reset it.
     window.cancelAnimationFrame(gameState.frame);
     gameState.reset();
     gameState.status = Status.STARTED;
     draw();
 });
 
-
+// Draw the sun to the canvas.
 function sun(x: number, y: number, r: number, n: number, inset: number) {
     if (!ctx) return;
     ctx.save();
@@ -47,8 +50,18 @@ function sun(x: number, y: number, r: number, n: number, inset: number) {
     ctx.fillStyle = 'rgba(255, 215, 0, 0.7)';
     ctx.fill();
     ctx.restore();
+    let radius = r / 1.4;
+    for (let i = 0; i < 5; i++) {
+        ctx.fillStyle = 'rgba(255, 65, 0, 0.31)';
+        ctx.beginPath();
+        ctx.arc(x, y, radius * gameState.scale, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fill();
+        radius /= 1.8;
+    }
 }
 
+// Draw the background stars.
 function nightstars() {
     if (!ctx) { return };
     for (const star of gameState.stars) {
@@ -70,40 +83,34 @@ function setup() {
     gameState.reset();
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
+    // Retrieve the players from localStorage if they exist.
     const content = localStorage.getItem("players");
     const playerTextarea = document.getElementById('players') as HTMLInputElement | null;
     if (content && playerTextarea) {
         playerTextarea!.value = content;
         gameState.frame = window.requestAnimationFrame(draw);
     }
+    // Let the listeners know that the players have been updated.
     playerTextarea?.dispatchEvent(new Event("input"))
 }
 
 function draw() {
     if (!ctx) return;
+    // Clear the canvas.
     ctx.fillStyle = 'black';
     ctx.strokeStyle = 'black'
     ctx.fillRect(0, 0, gameState.width, gameState.height);
     ctx.strokeRect(0, 0, gameState.width, gameState.height);
+
     nightstars();
-    const x = gameState.width / 2;
-    const y = gameState.height / 2;
     let radius = RADIUS;
 
     if (gameState.status === Status.STARTED) {
-        sun(gameState.width / 2, gameState.height / 2, 1.4 * radius * gameState.scale, 16, 0.65);
-        for (let i = 0; i < 5; i++) {
-            ctx.fillStyle = 'rgba(255, 65, 0, 0.31)';
-            ctx.beginPath();
-            ctx.arc(x, y, radius * gameState.scale, 0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.fill();
-            radius /= 1.8;
-        }
+        sun(gameState.center().x, gameState.center().y, 1.4 * radius * gameState.scale, 16, 0.65);
     }
-
     if (gameState.status === Status.PAUSED) { return };
 
+    // Mark dead balls. Check for collisions and adjust velocities.
     for (let i = 0; i < gameState.balls.length; i++) {
         gameState.balls[i].gone();
         for (let j = 0; j < i; j++) {
@@ -111,17 +118,21 @@ function draw() {
         }
     }
 
+    // Move and draw the balls.
     for (let i = 0; i < gameState.balls.length; i++) {
         gameState.balls[i].move();
         gameState.balls[i].render(1);
     }
 
+    // Check if the game is over and set the gameState status appropriatley.
     gameState.gameOver();
     if (gameState.status as Status === Status.OVER) {
         let ball = gameState.winners()[0];
         ball.vel = (new Vec(gameState.width / 2, gameState.height / 2)).sub(ball.pos);
         ball.vel = ball.vel.withMag(3);
-        if (gameState.balls[gameState.runnerUp].radius < 3 && ball.pos.distance(new Vec(gameState.width / 2, gameState.height / 2)) < 3) {
+        // If the game is over and the winner has returned to the center, stop the animation and
+        // animate the winner.
+        if (gameState.balls[gameState.runnerUp].radius < 3 && ball.pos.distance(gameState.center()) < 3) {
             window.cancelAnimationFrame(gameState.frame);
             animateWinner();
             return;

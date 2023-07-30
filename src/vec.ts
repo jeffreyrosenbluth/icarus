@@ -1,3 +1,4 @@
+// A 2d vector class.  This is used for the position and velocity of the ball.
 export class Vec {
     constructor(public x: number, public y: number) {
     }
@@ -23,6 +24,7 @@ export class Vec {
         return new Vec(this.x / m, this.y / m);
     }
 
+    // Create a new vector with the same direction as this one, but with the given magnitude.
     withMag(mag: number): Vec {
         const v = this.normalize();
         return new Vec(v.x * mag, v.y * mag);
@@ -37,6 +39,8 @@ export class Vec {
     }
 
 
+    // If the vector is very small in either direction, make it a little bigger.
+    // This is used to prevent the ball from moving parallel to an axis.
     unzero() {
         const m = this.mag();
         if (Math.abs(this.x) < 0.05) {

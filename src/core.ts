@@ -1,4 +1,5 @@
 import { Ball } from "./balls";
+import { Vec } from "./vec";
 
 export const canvas = document.querySelector("canvas");
 export const ctx = canvas?.getContext('2d');
@@ -10,6 +11,7 @@ export enum BallState {
     DEAD,
 }
 
+// A game can be paused, started, or over.
 export enum Status {
     PAUSED,
     STARTED,
@@ -24,8 +26,11 @@ export class GameState {
         public scale: number = 1,
         public players: Array<string> = [],
         public balls: Array<Ball> = [],
+        // The position, radius and opacity of the background stars.
         public stars: Array<{ x: number, y: number, r: number, alpha: number }> = [],
+        // The frame number of the animation, used to cancel the animation frame,when complete.
         public frame: number = 0,
+        // The penuultimate ball.
         public runnerUp: number = 0) {
         for (let i = 0; i < 70; i++) {
             const x = Math.random() * this.width;
@@ -34,6 +39,11 @@ export class GameState {
             const alpha = Math.random();
             this.stars.push({ x, y, r, alpha });
         }
+    }
+
+    // The center of the game area.
+    center() {
+        return new Vec(this.width / 2, this.height / 2);
     }
 
     reset() {

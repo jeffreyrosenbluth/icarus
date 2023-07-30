@@ -10,6 +10,7 @@ function randomVelocity(mag: number): Vec {
     while (Math.abs(x) <= 0.1) { x = Math.random() - 0.5 };
     while (Math.abs(y) <= 0.1) { y = Math.random() - 0.5 };
     let vel = new Vec(x, y).withMag(mag);
+    // Make sure the ball is not traveling parallel to the x or y axis.
     vel.unzero();
     return vel;
 }
@@ -24,6 +25,8 @@ function randomPosition(width: number, height: number, radius: number): Vec {
 }
 
 export class Rgba {
+    // A color with red, green, blue, and alpha components. r, g, and b are in [0, 255].
+    // a is in [0, 1].
     constructor(
         public r: number = 0,
         public g: number = 0,
@@ -46,6 +49,7 @@ export class Rgba {
     }
 }
 
+// A ball is a circle with a position and velocity.
 export class Ball {
     constructor(
         public radius: number,
@@ -67,6 +71,7 @@ export class Ball {
         this.color.setAlpha(1);
     }
 
+    // Formulats from: https://en.wikipedia.org/wiki/Elastic_collision
     collide(other: Ball) {
         if (other == this || this.state !== BallState.ALIVE || other.state !== BallState.ALIVE) {
             return;
@@ -79,7 +84,9 @@ export class Ball {
             const distSq = posDiff.dot(posDiff);
             const cosAngle = velDiff.dot(posDiff);
             this.vel = this.vel.sub(posDiff.mul(cosAngle / distSq));
+            // Don't let the balls get too slow.
             if (this.vel.mag() < 3) { this.vel = this.vel.withMag(3) };
+            // Don't let the ball move parallel to the x or y axis.
             this.vel.unzero();
             other.vel = other.vel.add(posDiff.mul(cosAngle / distSq));
             if (other.vel.mag() < 3) { other.vel = other.vel.withMag(3) };
@@ -88,10 +95,12 @@ export class Ball {
     }
 
     move() {
+        // Freeze a dying ball in place, approximately
         if (this.state === BallState.DEAD) {
             this.vel = this.vel.mul(-0.95);
         }
         this.pos = this.pos.add(this.vel);
+        // Bounce the ball off the walls.
         if (this.pos.x < this.radius) {
             this.pos.x = this.radius;
             this.vel.x = -this.vel.x;
@@ -110,10 +119,12 @@ export class Ball {
         }
     }
 
+    // If a ball flies too close to the sun, it dies.
     gone() {
-        let center = new Vec(gameState.width / 2, gameState.height / 2);
-        let relative = center.sub(this.pos);
+        let relative = gameState.center().sub(this.pos);
+        // Give the ball a little extra space to live. 5 pixels.
         let dist = relative.mag() - this.radius * 2 - 5;
+        // Don't kill the winning ball.
         if (dist < 0 && gameState.status as Status !== Status.OVER) {
             this.state = BallState.DEAD;
             gameState.runnerUp = this.id;
@@ -121,11 +132,11 @@ export class Ball {
     }
 
     render(size: number) {
-        if (!ctx) return;
-        if (!canvas) return;
+        if (!ctx || !canvas) return;
         let fontSize = 20 / RADIUS * this.radius * size * gameState.scale;
         ctx.strokeStyle = this.color.color();
         ctx.lineWidth = 5 * size * gameState.scale;
+        // Animate out dead ball.
         if (this.state === BallState.DEAD) {
             this.radius = this.radius < 3 ? 0 : this.radius * FADE;
             if (this.radius < 3) {
@@ -135,6 +146,8 @@ export class Ball {
             }
             this.color.setAlpha(FADE * this.radius / RADIUS);
         }
+        // Draw the the top and bottom arcs of the ball.
+        // Leave a little space for the name.
         ctx.beginPath();
         ctx.arc(
             this.pos.x,
@@ -153,6 +166,7 @@ export class Ball {
             -EPSILON
         );
         ctx.stroke();
+        // Draw the name.
         ctx.font = `bold ${fontSize}px sans-serif`;
         ctx.textAlign = "center";
         ctx.fillStyle = this.color.color();
