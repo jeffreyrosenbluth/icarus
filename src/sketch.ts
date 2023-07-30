@@ -17,6 +17,9 @@ playerTextarea?.addEventListener('input', function (event) {
         gameState.balls.push(ball);
     });
     gameState.reset();
+    if (localStorage) {
+        localStorage.setItem('players', target.value);
+    }
 });
 
 const playButton = document.getElementById('playButton');
@@ -67,8 +70,14 @@ function setup() {
     gameState.reset();
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
-    gameState.frame = window.requestAnimationFrame(draw);
-};
+    const content = localStorage.getItem("players");
+    const playerTextarea = document.getElementById('players') as HTMLInputElement | null;
+    if (content && playerTextarea) {
+        playerTextarea!.value = content;
+        gameState.frame = window.requestAnimationFrame(draw);
+    }
+    playerTextarea?.dispatchEvent(new Event("input"))
+}
 
 function draw() {
     if (!ctx) return;
