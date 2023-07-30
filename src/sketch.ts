@@ -81,15 +81,16 @@ function draw() {
     const y = gameState.height / 2;
     let radius = RADIUS;
 
-    sun(gameState.width / 2, gameState.height / 2, 1.4 * radius * gameState.scale, 16, 0.65);
-
-    for (let i = 0; i < 5; i++) {
-        ctx.fillStyle = 'rgba(255, 65, 0, 0.31)';
-        ctx.beginPath();
-        ctx.arc(x, y, radius * gameState.scale, 0, 2 * Math.PI);
-        ctx.closePath();
-        ctx.fill();
-        radius /= 1.8;
+    if (gameState.status === Status.STARTED) {
+        sun(gameState.width / 2, gameState.height / 2, 1.4 * radius * gameState.scale, 16, 0.65);
+        for (let i = 0; i < 5; i++) {
+            ctx.fillStyle = 'rgba(255, 65, 0, 0.31)';
+            ctx.beginPath();
+            ctx.arc(x, y, radius * gameState.scale, 0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.fill();
+            radius /= 1.8;
+        }
     }
 
     if (gameState.status === Status.PAUSED) { return };
