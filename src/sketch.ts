@@ -128,7 +128,7 @@ function draw() {
     gameState.gameOver();
     if (gameState.status as Status === Status.OVER) {
         let ball = gameState.winners()[0];
-        ball.vel = (new Vec(gameState.width / 2, gameState.height / 2)).sub(ball.pos);
+        ball.vel = gameState.center().sub(ball.pos);
         ball.vel = ball.vel.withMag(3);
         // If the game is over and the winner has returned to the center, stop the animation and
         // animate the winner.
@@ -150,7 +150,7 @@ function animateWinner() {
     nightstars();
 
     const ball = gameState.winners()[0];
-    const fontSize = 25 / RADIUS * ball.radius * gameState.scale;
+    const fontSize = 20 / RADIUS * ball.radius * gameState.scale;
     const text = `${ball.name}`;
 
     ctx.font = `bold ${fontSize}px sans-serif`;
