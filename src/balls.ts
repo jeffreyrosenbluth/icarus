@@ -29,10 +29,6 @@ export class Rgba {
         public g: number = 0,
         public b: number = 0,
         public a: number = 1) {
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.a = a;
     }
 
     color() {
@@ -52,21 +48,15 @@ export class Rgba {
 
 export class Ball {
     constructor(
+        public radius: number,
         public id: number = 0,
         public pos: Vec = new Vec(0, 0),
         public vel: Vec = new Vec(0, 0),
-        public radius: number = RADIUS * gameState.scale,
         public color: Rgba = new Rgba(),
         public name: string = '',
         public state: BallState = BallState.ALIVE) {
-        this.id = id;
-        this.pos = pos;
-        this.vel = vel;
-        this.radius = radius;
         color.random();
         this.color = color;
-        this.name = name;
-        this.state = state;
     };
 
     reset(gameState: GameState) {

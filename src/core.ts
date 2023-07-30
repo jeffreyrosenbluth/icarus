@@ -27,12 +27,6 @@ export class GameState {
         public stars: Array<{ x: number, y: number, r: number, alpha: number }> = [],
         public frame: number = 0,
         public runnerUp: number = 0) {
-        this.width = width;
-        this.height = height;
-        this.status = status;
-        this.scale = scale;
-        this.players = players;
-        this.balls = balls;
         for (let i = 0; i < 70; i++) {
             const x = Math.random() * this.width;
             const y = Math.random() * this.height;

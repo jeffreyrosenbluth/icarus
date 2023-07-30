@@ -11,7 +11,7 @@ playerTextarea?.addEventListener('input', function (event) {
     gameState.players = players.map(v => v.trim());
     gameState.balls = [];
     gameState.players.forEach((name, i) => {
-        let ball = new Ball();
+        let ball = new Ball(RADIUS * gameState.scale);
         ball.name = name;
         ball.id = i;
         gameState.balls.push(ball);
@@ -111,7 +111,7 @@ function draw() {
         let ball = gameState.winners()[0];
         ball.vel = (new Vec(gameState.width / 2, gameState.height / 2)).sub(ball.pos);
         ball.vel = ball.vel.withMag(3);
-        if (gameState.balls[gameState.runnerUp].radius < 3) {
+        if (gameState.balls[gameState.runnerUp].radius < 3 && ball.pos.distance(new Vec(gameState.width / 2, gameState.height / 2)) < 3) {
             window.cancelAnimationFrame(gameState.frame);
             animateWinner();
             return;
