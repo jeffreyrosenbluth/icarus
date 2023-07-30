@@ -133,7 +133,7 @@ export class Ball {
 
     render(size: number) {
         if (!ctx || !canvas) return;
-        let fontSize = 20 / RADIUS * this.radius * size * gameState.scale;
+        let fontSize = 25 / RADIUS * this.radius * size * gameState.scale;
         ctx.strokeStyle = this.color.color();
         ctx.lineWidth = 5 * size * gameState.scale;
         // Animate out dead ball.
