@@ -149,10 +149,8 @@ function animateWinner() {
     ctx.strokeRect(0, 0, gameState.width, gameState.height);
     nightstars();
 
-    const x = gameState.width / 2;
-    const y = gameState.height / 2;
     const ball = gameState.winners()[0];
-    const fontSize = 20 / RADIUS * ball.radius * gameState.scale;
+    const fontSize = 25 / RADIUS * ball.radius * gameState.scale;
     const text = `${ball.name}`;
 
     ctx.font = `bold ${fontSize}px sans-serif`;
@@ -160,7 +158,7 @@ function animateWinner() {
     ctx.fillStyle = ball.color.color();
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(text, x, y);
+    ctx.fillText(text, gameState.center().x, gameState.center().y);
 
     ball.radius += 0.5;
     if (ball.radius > 100) {
