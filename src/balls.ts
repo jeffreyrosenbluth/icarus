@@ -135,7 +135,7 @@ export class Ball {
         if (!ctx || !canvas) return;
         let fontSize = 25 / RADIUS * this.radius * size * gameState.scale;
         ctx.strokeStyle = this.color.color();
-        ctx.lineWidth = 5 * size * gameState.scale;
+        ctx.lineWidth = 6 * size * gameState.scale;
         // Animate out dead ball.
         if (this.state === BallState.DEAD) {
             this.radius = this.radius < 3 ? 0 : this.radius * FADE;
