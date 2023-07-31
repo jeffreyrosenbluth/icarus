@@ -71,7 +71,7 @@ export class Ball {
         this.color.setAlpha(1);
     }
 
-    // Formulats from: https://en.wikipedia.org/wiki/Elastic_collision
+    // Formulas from: https://en.wikipedia.org/wiki/Elastic_collision
     collide(other: Ball) {
         if (other == this || this.state !== BallState.ALIVE || other.state !== BallState.ALIVE) {
             return;
@@ -95,9 +95,9 @@ export class Ball {
     }
 
     move() {
-        // Freeze a dying ball in place, approximately
+        // Freeze a dying ball in place.
         if (this.state === BallState.DEAD) {
-            this.vel = this.vel.mul(-0.95);
+            this.vel = new Vec(0, 0);
         }
         this.pos = this.pos.add(this.vel);
         // Bounce the ball off the walls.

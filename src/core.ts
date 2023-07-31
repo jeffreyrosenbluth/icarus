@@ -59,7 +59,7 @@ export class GameState {
         const windowHeight = 0.60 * window.innerHeight;
         this.width = windowWidth;
         this.height = windowHeight;
-        this.scale = Math.max(gameState.width, gameState.height) / 1000;
+        this.scale = Math.sqrt(gameState.width * gameState.height) / 1000;
     }
 
     setStars(n: number) {

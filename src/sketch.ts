@@ -183,7 +183,7 @@ function resizeCanvas() {
 
     gameState.width = windowWidth;
     gameState.height = windowHeight;
-    gameState.scale = Math.max(gameState.width, gameState.height) / 1000;
+    gameState.scale = Math.sqrt(gameState.width * gameState.height) / 1000;
     draw();
 }
 
