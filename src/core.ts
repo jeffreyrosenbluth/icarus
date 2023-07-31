@@ -4,7 +4,7 @@ import { Vec } from "./vec";
 export const canvas = document.querySelector("canvas");
 export const ctx = canvas?.getContext('2d');
 
-export const RADIUS = 35;
+export const RADIUS = 40;
 
 export enum BallState {
     ALIVE,

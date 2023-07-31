@@ -149,7 +149,7 @@ function animateWinner() {
     nightstars();
 
     const ball = gameState.winners()[0];
-    const fontSize = 20 / RADIUS * ball.radius * gameState.scale;
+    const fontSize = 25 / RADIUS * ball.radius * gameState.scale;
     const text = `${ball.name}`;
 
     ctx.font = `bold ${fontSize}px sans-serif`;
@@ -184,7 +184,6 @@ function resizeCanvas() {
     gameState.width = windowWidth;
     gameState.height = windowHeight;
     gameState.scale = Math.sqrt(gameState.width * gameState.height) / 1000;
-    draw();
 }
 
 setup();
