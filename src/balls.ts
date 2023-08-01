@@ -56,6 +56,7 @@ export class Ball {
         public id: number = 0,
         public pos: Vec = new Vec(0, 0),
         public vel: Vec = new Vec(0, 0),
+        public acc: Vec = new Vec(0, 0),
         public color: Rgba = new Rgba(),
         public name: string = '',
         public state: BallState = BallState.ALIVE) {
@@ -99,6 +100,8 @@ export class Ball {
         if (this.state === BallState.DEAD) {
             this.vel = new Vec(0, 0);
         }
+        this.acc = gameState.center().sub(this.pos).mul(0.0001);
+        this.vel = this.vel.add(this.acc);
         this.pos = this.pos.add(this.vel);
         // Bounce the ball off the walls.
         if (this.pos.x < this.radius) {

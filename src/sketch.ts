@@ -88,9 +88,10 @@ function setup() {
     if (content && playerTextarea) {
         playerTextarea!.value = content;
         gameState.frame = window.requestAnimationFrame(draw);
+        // Let the listeners know that the players have been updated.
+        playerTextarea?.dispatchEvent(new Event("input"));
     }
-    // Let the listeners know that the players have been updated.
-    playerTextarea?.dispatchEvent(new Event("input"))
+    gameState.frame = window.requestAnimationFrame(draw);
 }
 
 function draw() {
@@ -184,6 +185,9 @@ function resizeCanvas() {
     gameState.width = windowWidth;
     gameState.height = windowHeight;
     gameState.scale = Math.sqrt(gameState.width * gameState.height) / 1000;
+    if (gameState.status !== Status.STARTED) {
+        gameState.frame = window.requestAnimationFrame(draw);
+    }
 }
 
 setup();
