@@ -1,5 +1,5 @@
 import { Vec } from './vec';
-import { RADIUS, BallState, GameState, gameState, canvas, ctx, Status } from './core';
+import { RADIUS, BallState, GameState, canvas, ctx, Status } from './core';
 
 const EPSILON = 0.4;
 const FADE = 0.95;
@@ -10,8 +10,6 @@ function randomVelocity(mag: number): Vec {
     while (Math.abs(x) <= 0.1) { x = Math.random() - 0.5 };
     while (Math.abs(y) <= 0.1) { y = Math.random() - 0.5 };
     let vel = new Vec(x, y).withMag(mag);
-    // Make sure the ball is not traveling parallel to the x or y axis.
-    vel.unzero();
     return vel;
 }
 
@@ -56,6 +54,7 @@ export class Ball {
         public id: number = 0,
         public pos: Vec = new Vec(0, 0),
         public vel: Vec = new Vec(0, 0),
+        public acc: Vec = new Vec(0, 0),
         public color: Rgba = new Rgba(),
         public name: string = '',
         public state: BallState = BallState.ALIVE) {
@@ -84,21 +83,21 @@ export class Ball {
             const distSq = posDiff.dot(posDiff);
             const cosAngle = velDiff.dot(posDiff);
             this.vel = this.vel.sub(posDiff.mul(cosAngle / distSq));
-            // Don't let the balls get too slow.
             if (this.vel.mag() < 3) { this.vel = this.vel.withMag(3) };
-            // Don't let the ball move parallel to the x or y axis.
-            this.vel.unzero();
             other.vel = other.vel.add(posDiff.mul(cosAngle / distSq));
             if (other.vel.mag() < 3) { other.vel = other.vel.withMag(3) };
-            other.vel.unzero();
         }
     }
 
-    move() {
+    move(gameState: GameState) {
         // Freeze a dying ball in place.
         if (this.state === BallState.DEAD) {
             this.vel = new Vec(0, 0);
         }
+        // Add a small bit for acceleration towards the sun to prevent the game
+        // from going too long.
+        this.acc = gameState.center().sub(this.pos).mul(0.0001);
+        this.vel = this.vel.add(this.acc);
         this.pos = this.pos.add(this.vel);
         // Bounce the ball off the walls.
         if (this.pos.x < this.radius) {
@@ -120,7 +119,7 @@ export class Ball {
     }
 
     // If a ball flies too close to the sun, it dies.
-    gone() {
+    gone(gameState: GameState) {
         let relative = gameState.center().sub(this.pos);
         // Give the ball a little extra space to live. 5 pixels.
         let dist = relative.mag() - this.radius * 2 - 5;
@@ -131,7 +130,7 @@ export class Ball {
         }
     }
 
-    render(size: number) {
+    render(gameState: GameState, size: number) {
         if (!ctx || !canvas) return;
         let fontSize = 35 / RADIUS * this.radius * size * gameState.scale;
         ctx.strokeStyle = this.color.color();

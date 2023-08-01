@@ -1,6 +1,6 @@
 import './style.css'
 import { Ball } from './balls';
-import { canvas, ctx, gameState, Status, RADIUS } from './core';
+import { canvas, ctx, gameState, Status, RADIUS, GameState } from './core';
 
 // Update the players / balls when the user types in the textarea.
 // Store the players in localStorage.
@@ -29,7 +29,7 @@ playButton?.addEventListener('click', function handleClick(_event) {
     window.cancelAnimationFrame(gameState.frame);
     gameState.reset();
     gameState.status = Status.STARTED;
-    draw();
+    draw(gameState);
 });
 
 // Draw the sun to the canvas.
@@ -77,23 +77,24 @@ function nightstars() {
     }
 }
 
-function setup() {
+function setup(gameState: GameState) {
     if (!ctx || !canvas) { return };
     gameState.reset();
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas(gameState);
+    window.addEventListener("resize", () => resizeCanvas(gameState));
     // Retrieve the players from localStorage if they exist.
     const content = localStorage.getItem("players");
     const playerTextarea = document.getElementById('players') as HTMLInputElement | null;
     if (content && playerTextarea) {
         playerTextarea!.value = content;
-        gameState.frame = window.requestAnimationFrame(draw);
+        gameState.frame = window.requestAnimationFrame(() => draw(gameState));
+        // Let the listeners know that the players have been updated.
+        playerTextarea?.dispatchEvent(new Event("input"));
     }
-    // Let the listeners know that the players have been updated.
-    playerTextarea?.dispatchEvent(new Event("input"))
+    gameState.frame = window.requestAnimationFrame(() => draw(gameState));
 }
 
-function draw() {
+function draw(gameState: GameState) {
     if (!ctx) return;
     // Clear the canvas.
     ctx.fillStyle = 'black';
@@ -111,7 +112,7 @@ function draw() {
 
     // Mark dead balls. Check for collisions and adjust velocities.
     for (let i = 0; i < gameState.balls.length; i++) {
-        gameState.balls[i].gone();
+        gameState.balls[i].gone(gameState);
         for (let j = 0; j < i; j++) {
             gameState.balls[i].collide(gameState.balls[j]);
         }
@@ -119,8 +120,8 @@ function draw() {
 
     // Move and draw the balls.
     for (let i = 0; i < gameState.balls.length; i++) {
-        gameState.balls[i].move();
-        gameState.balls[i].render(1);
+        gameState.balls[i].move(gameState);
+        gameState.balls[i].render(gameState, 1);
     }
 
     // Check if the game is over and set the gameState status appropriatley.
@@ -133,14 +134,14 @@ function draw() {
         // animate the winner.
         if (gameState.balls[gameState.runnerUp].radius < 3 && ball.pos.distance(gameState.center()) < 3) {
             window.cancelAnimationFrame(gameState.frame);
-            animateWinner();
+            animateWinner(gameState);
             return;
         }
     }
-    gameState.frame = window.requestAnimationFrame(draw)
+    gameState.frame = window.requestAnimationFrame(() => draw(gameState))
 };
 
-function animateWinner() {
+function animateWinner(gameState: GameState) {
     if (!ctx) return;
     ctx.fillStyle = 'black';
     ctx.strokeStyle = 'black'
@@ -165,10 +166,10 @@ function animateWinner() {
         window.cancelAnimationFrame(gameState.frame);
         return;
     }
-    gameState.frame = window.requestAnimationFrame(animateWinner);
+    gameState.frame = window.requestAnimationFrame(() => animateWinner(gameState));
 }
 
-function resizeCanvas() {
+function resizeCanvas(gameState: GameState) {
     if (!canvas || !ctx) { return };
     const windowWidth = 0.75 * window.innerWidth;
     const windowHeight = 0.60 * window.innerHeight;
@@ -184,6 +185,9 @@ function resizeCanvas() {
     gameState.width = windowWidth;
     gameState.height = windowHeight;
     gameState.scale = Math.sqrt(gameState.width * gameState.height) / 1000;
+    if (gameState.status !== Status.STARTED) {
+        gameState.frame = window.requestAnimationFrame(() => draw(gameState));
+    }
 }
 
-setup();
+setup(gameState);
