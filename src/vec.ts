@@ -37,19 +37,4 @@ export class Vec {
     distance(other: Vec): number {
         return this.sub(other).mag();
     }
-
-
-    // If the vector is very small in either direction, make it a little bigger.
-    // This is used to prevent the ball from moving parallel to an axis.
-    unzero() {
-        const m = this.mag();
-        if (Math.abs(this.x) < 0.1) {
-            this.x = 0.1 * m * Math.sign(this.x);
-            this.y = 0.9 * m * Math.sign(this.y);
-        }
-        if (Math.abs(this.y) < 0.05) {
-            this.x = 0.9 * m * Math.sign(this.x);
-            this.y = 0.1 * m * Math.sign(this.y);
-        }
-    }
 }
