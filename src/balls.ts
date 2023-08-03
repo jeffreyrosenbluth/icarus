@@ -96,7 +96,7 @@ export class Ball {
         }
         // Add a small bit for acceleration towards the sun to prevent the game
         // from going too long.
-        this.acc = gameState.center().sub(this.pos).mul(0.0001);
+        this.acc = gameState.center().sub(this.pos).mul(0.0002);
         this.vel = this.vel.add(this.acc);
         this.pos = this.pos.add(this.vel);
         // Bounce the ball off the walls.
