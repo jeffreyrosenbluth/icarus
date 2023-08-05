@@ -95,9 +95,9 @@ export class Ball {
             this.vel = new Vec(0, 0);
         }
         // Add a small bit for acceleration towards the sun to prevent the game
-        // from going too long.
+        // from going too long. Add some rnadomness for same effect.
         this.acc = gameState.center().sub(this.pos).mul(0.0002);
-        this.vel = this.vel.add(this.acc);
+        this.vel = this.vel.add(this.acc).add(new Vec(0.0004 * Math.random(), 0.0004 * Math.random()));
         this.pos = this.pos.add(this.vel);
         // Bounce the ball off the walls.
         if (this.pos.x < this.radius) {
