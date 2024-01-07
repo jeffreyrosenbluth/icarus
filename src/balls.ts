@@ -81,7 +81,7 @@ export class Ball {
       gameState.height,
       RADIUS * gameState.scale
     );
-    this.vel = randomVelocity(7 * gameState.scale);
+    this.vel = randomVelocity(4 * gameState.scale);
     this.radius = RADIUS * gameState.scale;
     this.color.setAlpha(1);
   }
@@ -106,9 +106,15 @@ export class Ball {
       if (this.vel.mag() < 3) {
         this.vel = this.vel.withMag(3);
       }
+      if (this.vel.mag() > 7) {
+        this.vel = this.vel.withMag(7);
+      }
       other.vel = other.vel.add(posDiff.mul(cosAngle / distSq));
       if (other.vel.mag() < 3) {
         other.vel = other.vel.withMag(3);
+      }
+      if (other.vel.mag() > 7) {
+        other.vel = other.vel.withMag(7);
       }
     }
   }
