@@ -179,7 +179,7 @@ function animateWinner(gameState: GameState) {
     gameState.players.includes("reed")
   ) {
     ctx.save();
-    ctx.font = "bold 48 sans-serif";
+    ctx.font = "bold ${1.40 * fontSize}px sans-serif";
     ctx.shadowColor = "rgb(190, 190, 190)";
     ctx.shadowOffsetX = 10;
     ctx.shadowOffsetY = 10;
