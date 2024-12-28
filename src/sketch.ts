@@ -178,12 +178,27 @@ function animateWinner(gameState: GameState) {
     gameState.players.includes("Reed") ||
     gameState.players.includes("reed")
   ) {
-    ctx.fillStyle = "white";
-    ctx.fillText(
-      "Happy 30th Brithday Reed!",
-      gameState.center().x,
-      gameState.center().y + 75
+    ctx.save();
+    ctx.font = "bold 48 sans-serif";
+    ctx.shadowColor = "rgb(190, 190, 190)";
+    ctx.shadowOffsetX = 10;
+    ctx.shadowOffsetY = 10;
+    ctx.shadowBlur = 10;
+    const gradient = ctx.createLinearGradient(
+      gameState.center().x - 100,
+      gameState.center().x + 100,
+      150,
+      100
     );
+    gradient.addColorStop(0, "rgb(255, 0, 0)");
+    gradient.addColorStop(1, "rgb(255, 255, 0)");
+    ctx.fillStyle = gradient;
+    ctx.fillText(
+      "Happy 30th Brithday, Reed!",
+      gameState.center().x,
+      gameState.center().y + 125
+    );
+    ctx.restore();
   }
 
   ball.radius += 0.5;
