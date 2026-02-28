@@ -5,7 +5,7 @@ import { canvas, ctx, gameState, Status, RADIUS, GameState } from "./core";
 // Update the players / balls when the user types in the textarea.
 // Store the players in localStorage.
 const playerTextarea = document.getElementById(
-  "players"
+  "players",
 ) as HTMLInputElement | null;
 playerTextarea?.addEventListener("input", function (event) {
   const target = event.target as HTMLInputElement;
@@ -85,7 +85,7 @@ function setup(gameState: GameState) {
   // Retrieve the players from localStorage if they exist.
   const content = localStorage.getItem("players");
   const playerTextarea = document.getElementById(
-    "players"
+    "players",
   ) as HTMLInputElement | null;
   if (content && playerTextarea) {
     playerTextarea!.value = content;
@@ -113,7 +113,7 @@ function draw(gameState: GameState) {
       gameState.center().y,
       1.4 * radius * gameState.scale,
       16,
-      0.65
+      0.65,
     );
   }
   if (gameState.status === Status.PAUSED) {
@@ -174,33 +174,6 @@ function animateWinner(gameState: GameState) {
   ctx.textBaseline = "middle";
   ctx.fillText(text, gameState.center().x, gameState.center().y);
 
-  if (
-    gameState.players.includes("Reed") ||
-    gameState.players.includes("reed")
-  ) {
-    ctx.save();
-    ctx.font = "bold ${1.40 * fontSize}px sans-serif";
-    ctx.shadowColor = "rgb(190, 190, 190)";
-    ctx.shadowOffsetX = 10;
-    ctx.shadowOffsetY = 10;
-    ctx.shadowBlur = 10;
-    const gradient = ctx.createLinearGradient(
-      gameState.center().x - 100,
-      gameState.center().x + 100,
-      150,
-      100
-    );
-    gradient.addColorStop(0, "rgb(255, 0, 0)");
-    gradient.addColorStop(1, "rgb(255, 255, 0)");
-    ctx.fillStyle = gradient;
-    ctx.fillText(
-      "Happy 30th Brithday, Reed!",
-      gameState.center().x,
-      gameState.center().y + 125
-    );
-    ctx.restore();
-  }
-
   ball.radius += 0.5;
   if (ball.radius > 100) {
     ball.reset(gameState);
@@ -208,7 +181,7 @@ function animateWinner(gameState: GameState) {
     return;
   }
   gameState.frame = window.requestAnimationFrame(() =>
-    animateWinner(gameState)
+    animateWinner(gameState),
   );
 }
 
