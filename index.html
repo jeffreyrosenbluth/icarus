@@ -5,8 +5,8 @@
     <link rel="icon" href="favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Icarus</title>
-    <script type="module" crossorigin src="/icarus/assets/index-1cfd6e28.js"></script>
-    <link rel="stylesheet" href="/icarus/assets/index-0d030f4c.css">
+    <script type="module" crossorigin src="/icarus/assets/index-c152f3f5.js"></script>
+    <link rel="stylesheet" href="/icarus/assets/index-f587e67e.css">
   </head>
   <body>
     <h1>Icarus</h1>
@@ -20,6 +20,27 @@
           spellcheck="false"></textarea>
       </div>
       <ol id="leaderboard"></ol>
+    </div>
+
+    <div id="instructionsPanel" hidden>
+      <div class="prefs-card">
+        <h2>How to play</h2>
+        <ul class="instructions-list">
+          <li>Enter players as a comma-separated list in the box below the canvas.</li>
+          <li>Click <strong>Play</strong> to launch them. Each ball drifts and bounces.</li>
+          <li>If a ball flies too close to the sun, it's eliminated and added to the leaderboard from the bottom up.</li>
+          <li>The last player(s) standing win. The number of survivors is configurable.</li>
+        </ul>
+        <h3>Keyboard</h3>
+        <ul class="instructions-list">
+          <li><kbd>&#8984;,</kbd> / <kbd>Ctrl+,</kbd> &mdash; open preferences</li>
+          <li><kbd>&#8984;I</kbd> / <kbd>Ctrl+I</kbd> &mdash; show these instructions</li>
+          <li><kbd>Esc</kbd> &mdash; close any open panel</li>
+        </ul>
+        <div class="prefs-actions instructions-actions">
+          <button id="instructionsClose">Close</button>
+        </div>
+      </div>
     </div>
 
     <div id="prefsPanel" hidden>
