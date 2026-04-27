@@ -159,6 +159,29 @@ textarea {
   border-radius: 0.25rem;
 }
 
+#instructionsHint {
+  position: fixed;
+  top: 14px;
+  right: 16px;
+  z-index: 50;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.85rem;
+  color: silver;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+#instructionsHint kbd {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.95em;
+  color: white;
+  margin-right: 6px;
+}
+
 #prefsPanel,
 #instructionsPanel {
   position: fixed;

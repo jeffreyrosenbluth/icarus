@@ -32,6 +32,15 @@ const instructionsPanel = document.getElementById(
 const instructionsClose = document.getElementById(
   "instructionsClose",
 ) as HTMLButtonElement;
+const instructionsHint = document.getElementById(
+  "instructionsHint",
+) as HTMLDivElement;
+
+const isMac = /Mac|iPad|iPhone|iPod/.test(navigator.platform);
+if (instructionsHint) {
+  const keyLabel = isMac ? "⌘I" : "Ctrl+I";
+  instructionsHint.innerHTML = `<kbd>${keyLabel}</kbd>for instructions`;
+}
 const prefWinners = document.getElementById("prefWinners") as HTMLInputElement;
 const prefSpeed = document.getElementById("prefSpeed") as HTMLInputElement;
 const prefSpeedValue = document.getElementById(
