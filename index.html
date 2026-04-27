@@ -10,10 +10,47 @@
     <h1>Icarus</h1>
     <h4>Don't fly too close to the sun.</h4>
     <button id="playButton">Play</button>
-    <canvas></canvas>
-    <textarea id="players" rows = "4" cols="64" 
-      placeholder="Enter a comma separated list of players, e.g. Alice, Bob, Charlie"
-      spellcheck="false"></textarea>
+    <div id="stage">
+      <div id="playArea">
+        <canvas></canvas>
+        <textarea id="players" rows = "4" cols="64"
+          placeholder="Enter a comma separated list of players, e.g. Alice, Bob, Charlie"
+          spellcheck="false"></textarea>
+      </div>
+      <ol id="leaderboard"></ol>
+    </div>
+
+    <div id="prefsPanel" hidden>
+      <div class="prefs-card">
+        <h2>Preferences</h2>
+        <label class="prefs-row">
+          <span>Show leaderboard</span>
+          <input type="checkbox" id="prefShowLeaderboard" checked>
+        </label>
+        <label class="prefs-row">
+          <span>Number of winners</span>
+          <input type="number" id="prefWinners" min="1" value="1">
+        </label>
+        <label class="prefs-row">
+          <span>Speed</span>
+          <input type="range" id="prefSpeed" min="0.25" max="3" step="0.05" value="1">
+          <span id="prefSpeedValue">1.00&times;</span>
+        </label>
+        <div class="prefs-row prefs-gen">
+          <span>Generate players</span>
+          <input type="text" id="prefGenWord" placeholder="Player" value="Player">
+          <input type="number" id="prefGenCount" min="1" value="4">
+          <button id="prefGenBtn" class="secondary" type="button">Generate</button>
+        </div>
+        <div class="prefs-actions">
+          <button id="prefsReset" class="secondary">Reset</button>
+          <button id="prefsCancel" class="secondary">Cancel</button>
+          <button id="prefsSave">Save</button>
+        </div>
+        <p class="prefs-hint">Press <kbd>&#8984;,</kbd> / <kbd>Ctrl+,</kbd> to toggle. <kbd>Esc</kbd> closes.</p>
+      </div>
+    </div>
+
     <script type="module" src="/src/sketch.ts"></script>
   </body>
 </html>

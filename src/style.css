@@ -53,8 +53,101 @@ button:hover {
   text-shadow: 1px 2px 2px #222222;
 }
 
-canvas {
+#stage {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
   padding-bottom: 25px;
+}
+
+#playArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+canvas {
+  display: block;
+}
+
+#leaderboard {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: silver;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 1.4vh;
+}
+
+#leaderboard li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  min-height: 28px;
+  overflow: hidden;
+}
+
+#leaderboard li .rank {
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.55);
+  width: 1.5em;
+  text-align: right;
+}
+
+#leaderboard li .name {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.15);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#leaderboard.hidden {
+  display: none;
+}
+
+.prefs-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: rgb(255, 215, 0);
+}
+
+#leaderboard li.slot-filled .name {
+  animation: slot-slide-in 420ms ease-out;
+}
+
+#leaderboard li.slot-winner {
+  background: rgba(255, 215, 0, 0.12);
+  border-color: rgba(255, 215, 0, 0.55);
+}
+
+#leaderboard li.slot-winner .rank,
+#leaderboard li.slot-winner .name {
+  color: rgb(255, 215, 0);
+}
+
+@keyframes slot-slide-in {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 textarea {
@@ -64,4 +157,130 @@ textarea {
   background-color: transparent;
   border-color: slategray;
   border-radius: 0.25rem;
+}
+
+#prefsPanel {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+#prefsPanel[hidden] {
+  display: none;
+}
+
+.prefs-card {
+  background: rgb(20, 25, 50);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 24px 28px;
+  min-width: 320px;
+  color: white;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.prefs-card h2 {
+  margin: 0 0 16px 0;
+  font-size: 1.4rem;
+}
+
+.prefs-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  font-size: 0.95rem;
+}
+
+.prefs-row > span:first-child {
+  flex: 1;
+}
+
+.prefs-row input[type="number"] {
+  width: 64px;
+  padding: 4px 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  font: inherit;
+}
+
+.prefs-row input[type="range"] {
+  flex: 1;
+}
+
+.prefs-gen input[type="text"] {
+  flex: 1;
+  min-width: 80px;
+  padding: 4px 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  font: inherit;
+}
+
+.prefs-gen input[type="number"] {
+  width: 56px;
+}
+
+.prefs-gen button {
+  width: auto;
+  padding: 4px 12px;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+#prefSpeedValue {
+  min-width: 3.5em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: silver;
+}
+
+.prefs-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.prefs-actions button {
+  width: auto;
+  padding: 6px 18px;
+  margin: 0;
+}
+
+.prefs-actions button.secondary {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: silver;
+}
+
+.prefs-actions button.secondary:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.prefs-hint {
+  margin: 14px 0 0 0;
+  font-size: 0.8rem;
+  color: silver;
+}
+
+.prefs-hint kbd {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
 }

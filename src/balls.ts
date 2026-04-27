@@ -81,13 +81,13 @@ export class Ball {
       gameState.height,
       RADIUS * gameState.scale
     );
-    this.vel = randomVelocity(4 * gameState.scale);
+    this.vel = randomVelocity(4 * gameState.scale * gameState.speedFactor);
     this.radius = RADIUS * gameState.scale;
     this.color.setAlpha(1);
   }
 
   // Formulas from: https://en.wikipedia.org/wiki/Elastic_collision
-  collide(other: Ball) {
+  collide(other: Ball, gameState: GameState) {
     if (
       other == this ||
       this.state !== BallState.ALIVE ||
@@ -102,19 +102,21 @@ export class Ball {
       const posDiff = this.pos.sub(other.pos);
       const distSq = posDiff.dot(posDiff);
       const cosAngle = velDiff.dot(posDiff);
+      const minV = 3 * gameState.speedFactor;
+      const maxV = 7 * gameState.speedFactor;
       this.vel = this.vel.sub(posDiff.mul(cosAngle / distSq));
-      if (this.vel.mag() < 3) {
-        this.vel = this.vel.withMag(3);
+      if (this.vel.mag() < minV) {
+        this.vel = this.vel.withMag(minV);
       }
-      if (this.vel.mag() > 7) {
-        this.vel = this.vel.withMag(7);
+      if (this.vel.mag() > maxV) {
+        this.vel = this.vel.withMag(maxV);
       }
       other.vel = other.vel.add(posDiff.mul(cosAngle / distSq));
-      if (other.vel.mag() < 3) {
-        other.vel = other.vel.withMag(3);
+      if (other.vel.mag() < minV) {
+        other.vel = other.vel.withMag(minV);
       }
-      if (other.vel.mag() > 7) {
-        other.vel = other.vel.withMag(7);
+      if (other.vel.mag() > maxV) {
+        other.vel = other.vel.withMag(maxV);
       }
     }
   }
@@ -155,9 +157,14 @@ export class Ball {
     // Give the ball a little extra space to live. 5 pixels.
     let dist = relative.mag() - this.radius * 2 - 5;
     // Don't kill the winning ball.
-    if (dist < 0 && (gameState.status as Status) !== Status.OVER) {
+    if (
+      dist < 0 &&
+      this.state === BallState.ALIVE &&
+      (gameState.status as Status) !== Status.OVER
+    ) {
       this.state = BallState.DEAD;
       gameState.runnerUp = this.id;
+      gameState.eliminationOrder.push(this.id);
     }
   }
 
