@@ -20,6 +20,27 @@
       <ol id="leaderboard"></ol>
     </div>
 
+    <div id="instructionsPanel" hidden>
+      <div class="prefs-card">
+        <h2>How to play</h2>
+        <ul class="instructions-list">
+          <li>Enter players as a comma-separated list in the box below the canvas.</li>
+          <li>Click <strong>Play</strong> to launch them. Each ball drifts and bounces.</li>
+          <li>If a ball flies too close to the sun, it's eliminated and added to the leaderboard from the bottom up.</li>
+          <li>The last player(s) standing win. The number of survivors is configurable.</li>
+        </ul>
+        <h3>Keyboard</h3>
+        <ul class="instructions-list">
+          <li><kbd>&#8984;,</kbd> / <kbd>Ctrl+,</kbd> &mdash; open preferences</li>
+          <li><kbd>&#8984;I</kbd> / <kbd>Ctrl+I</kbd> &mdash; show these instructions</li>
+          <li><kbd>Esc</kbd> &mdash; close any open panel</li>
+        </ul>
+        <div class="prefs-actions instructions-actions">
+          <button id="instructionsClose">Close</button>
+        </div>
+      </div>
+    </div>
+
     <div id="prefsPanel" hidden>
       <div class="prefs-card">
         <h2>Preferences</h2>

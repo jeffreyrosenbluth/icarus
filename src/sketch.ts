@@ -26,6 +26,12 @@ const WINNER_REVEAL_DELAY_MS = 800;
 
 const leaderboardEl = document.getElementById("leaderboard") as HTMLOListElement;
 const prefsPanel = document.getElementById("prefsPanel") as HTMLDivElement;
+const instructionsPanel = document.getElementById(
+  "instructionsPanel",
+) as HTMLDivElement;
+const instructionsClose = document.getElementById(
+  "instructionsClose",
+) as HTMLButtonElement;
 const prefWinners = document.getElementById("prefWinners") as HTMLInputElement;
 const prefSpeed = document.getElementById("prefSpeed") as HTMLInputElement;
 const prefSpeedValue = document.getElementById(
@@ -500,13 +506,43 @@ prefSpeed?.addEventListener("input", () => {
   }
 });
 
+function openInstructions() {
+  if (!instructionsPanel.hidden) return;
+  if (!prefsPanel.hidden) closePrefs();
+  instructionsPanel.hidden = false;
+}
+
+function closeInstructions() {
+  if (instructionsPanel.hidden) return;
+  instructionsPanel.hidden = true;
+}
+
+function toggleInstructions() {
+  if (instructionsPanel.hidden) openInstructions();
+  else closeInstructions();
+}
+
+instructionsClose?.addEventListener("click", closeInstructions);
+
+instructionsPanel?.addEventListener("click", (e) => {
+  if (e.target === instructionsPanel) closeInstructions();
+});
+
 window.addEventListener("keydown", (e) => {
-  if (e.key === "," && (e.metaKey || e.ctrlKey)) {
+  if ((e.metaKey || e.ctrlKey) && e.key === ",") {
     e.preventDefault();
     togglePrefs();
-  } else if (e.key === "Escape" && !prefsPanel.hidden) {
+  } else if ((e.metaKey || e.ctrlKey) && (e.key === "i" || e.key === "I")) {
     e.preventDefault();
-    closePrefs();
+    toggleInstructions();
+  } else if (e.key === "Escape") {
+    if (!prefsPanel.hidden) {
+      e.preventDefault();
+      closePrefs();
+    } else if (!instructionsPanel.hidden) {
+      e.preventDefault();
+      closeInstructions();
+    }
   }
 });
 
