@@ -31,7 +31,15 @@ export class GameState {
         // The frame number of the animation, used to cancel the animation frame,when complete.
         public frame: number = 0,
         // The penuultimate ball.
-        public runnerUp: number = 0) {
+        public runnerUp: number = 0,
+        // Multiplier on every ball's velocity magnitude.
+        public speedFactor: number = 1.0,
+        // Game ends when alive count drops to this value.
+        public winnersCount: number = 1,
+        // Ball IDs in the order they were eliminated.
+        public eliminationOrder: Array<number> = [],
+        // Whether the leaderboard sidebar is visible.
+        public showLeaderboard: boolean = true) {
         for (let i = 0; i < 70; i++) {
             const x = Math.random() * this.width;
             const y = Math.random() * this.height;
@@ -52,6 +60,8 @@ export class GameState {
             ball.reset(this);
         });
         this.status = Status.PAUSED;
+        this.runnerUp = 0;
+        this.eliminationOrder = [];
     }
 
     resize() {
@@ -76,7 +86,7 @@ export class GameState {
         let count = this.balls.reduce((acc, ball) => {
             return ball.state === BallState.ALIVE ? acc + 1 : acc;
         }, 0);
-        if (count === 1) {
+        if (count <= Math.max(1, this.winnersCount)) {
             this.status = Status.OVER;
         }
     }
